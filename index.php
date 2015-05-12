@@ -5,7 +5,7 @@
  session_start();
 
 //Make constants using define
- define("clientID", "4abc400ab609efab9ef26bc3ee0b85");
+ define("clientID", "4abc400ab6094efab9bef26bc3ee0b85");
  define("clientSecret", "a04d624deca74e47a6dfa3df30807dd4");
  define("redirectURI", "http://localhost/jayyapi/index.php");
  define("ImageDirectory", "pics/");
@@ -14,13 +14,47 @@
  function connectToInstagram($url){
  	$ch = curl_init();
 
- 	curl_setopt_array($ch, array[
- 		CURLOPT_URL => $url;
- 		CURLOPT_RETURNTRANSFER => true;
- 		CURLOPT_SSL_VERIFYPEER => false;
- 		CURLOPT_SSL_VERIFYHOST => 2;
- 		]);
+ 	curl_setopt_array($ch, array(
+ 		CURLOPT_URL => $url,
+ 		CURLOPT_RETURNTRANSFER => true,
+ 		CURLOPT_SSL_VERIFYPEER => false,
+ 		CURLOPT_SSL_VERIFYHOST => 2,
+ 		));
+ 	$result = curl_exec($ch);
+ 	curl_close($ch);
+ 	return $result;
  }
+//function to get useerID cause userName doesn't allow us to get pictures
+ function getUserID($userName){
+ 	$url = 'http://api.instagram.com/v1/users/search?q='.$userName.'&client_id='.clientID;
+ 	$instagramInfo = connectToInstagram($url);
+ 	$results = json_decode($instagramInfo, true);
+
+ 	return $results['data']['0']['id'];
+ }
+
+function printImages($userID){
+$url = 'http://api.instagram.com/v1/users/'.$userID.'/media/recent?client_id='.clientID.'&count=5';
+$instagramInfo = connectToInstagram($url);
+$results = json_decode($instagramInfo, true);
+
+foreach ($results['data'] as $items) {
+	$image_url = $items['images']['low_resolution']['url'];
+	echo '<img src="'.$image_url.'"/><br/>';
+savePictures($image_url);
+
+}
+}
+
+function savePictures($image_url){
+echo $image_url.'<br>';
+$filename = basename($image_url);
+echo $filename . '<br>';
+
+$destination = imageDirectory . $filename;
+file_put_contents($destination, file_get_contents($image_url));
+}
+
 
 if (isset($_GET['code'])){
 	$code = ($_GET['code']);
@@ -38,13 +72,18 @@ if (isset($_GET['code'])){
 	curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 
-}
-$result = curl_exec($curl);
+
+$curl = curl_exec($curl);
 curl_close($curl);	
 
 $results = json_decode($result, true);
-echo $results['user']['username'];
-} 
+
+$userName = $results['user']['username'];
+
+$userID = getUserID($userName);
+
+printImages($userID);
+}
 else {
  ?>
 
@@ -67,7 +106,5 @@ else {
  </body>
  </html>
  <?php
-
- 
 }
 ?>
