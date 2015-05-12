@@ -28,7 +28,7 @@
  function getUserID($userName){
  	$url = 'http://api.instagram.com/v1/users/search?q='.$userName.'&client_id='.clientID;
  	$instagramInfo = connectToInstagram($url);
- 	$results = json_decode($instagramInfo, true);buiueuhgigrhhohgi
+ 	$results = json_decode($instagramInfo, true);
 
  	return $results['data']['0']['id'];
  }
