@@ -16,7 +16,7 @@
 
  	curl_setopt_array($ch, array(
  		CURLOPT_URL => $url,
- 		CURLOPT_RETURNTRANSFER => true,isfhieohfhvifwhrgoie
+ 		CURLOPT_RETURNTRANSFER => true,
  		CURLOPT_SSL_VERIFYPEER => false,
  		CURLOPT_SSL_VERIFYHOST => 2,
  		));
@@ -107,4 +107,4 @@ else {
  </html>
  <?php
 }
-?>
+?>ohgier
