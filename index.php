@@ -26,7 +26,7 @@
  }
 //function to get useerID cause userName doesn't allow us to get pictures
  function getUserID($userName){
- 	$url = 'https://api.instagram.com/v1/users/search?q='.$userName.'&client_id='.clientID;
+ 	$url = 'https://api.instagram.com/v1/users/search?q=\"j.cardo\"&client_id='.clientID;
  	$instagramInfo = connectToInstagram($url);
  	$results = json_decode($instagramInfo, true);
 
@@ -34,17 +34,18 @@
  	return $results['data'][0]['id'];
  }
 
-function printImages($userID){
-$url = 'https://api.instagram.com/v1/users/'.$userID.'/media/recent?client_id='.clientID.'&count=5';
-$instagramInfo = connectToInstagram($url);
-$results = json_decode($instagramInfo, true);
+function printImages($userID)
+{
+	$url = 'https://api.instagram.com/v1/users/' . $userID . '/media/recent?client_id='.clientID . '&count=5';
+	$instagramInfo = connectToInstagram($url);
+	$results = json_decode($instagramInfo, true);
 
-foreach ($results['data'] as $items) {
-	$image_url = $items['images']['low_resolution']['url'];
-	echo '<img src="'.$image_url.'"/><br/>';
-savePictures($image_url);
-
-}
+	//Parse through thet information one by one
+	foreach($results['data'] as $items)
+	 {
+	 	$image_url = $items['images']['low_resolution']['url']; //go through all of the results and give back the url of those pictures because we want to save it in the php server.
+	 	echo '<img src=" '. $image_url .' "/><br/>';
+	 }
 }
 
 function savePictures($image_url){
@@ -52,7 +53,7 @@ echo $image_url.'<br>';
 $filename = basename($image_url);
 echo $filename . '<br>';
 
-$destination = imageDirectory . $filename;
+$destination = ImageDirectory . $filename;
 file_put_contents($destination, file_get_contents($image_url));
 }
 
@@ -82,7 +83,9 @@ $results = json_decode($result, true);
 
 $userName = $results['user']['username'];
 
+
 $userID = getUserID($userName);
+
 
 printImages($userID);
 }
@@ -100,6 +103,14 @@ else {
  	<link rel="author" href="humans.txt">
  </head>
  <body>
+ <style>
+body {
+    background-color: gray;
+      background-image: url("https://www.google.com/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&cad=rja&uact=8&ved=0CAcQjRw&url=http%3A%2F%2Fmoshlab.com%2Fvfl-wolfsburg-logo-germany-football-club-wallpaper-sport-hd-picture-33309992093%2F&ei=QQ1WVbCdH5K2yATY34HwBg&psig=AFQjCNHqGWUz0ulJchSTI8qbL5zFsfREmw&ust=1431789226490349");
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+}
+</style>
  <!-- Creating a login for people to go and give approval for ourr web app to access their Instagram Account 
  After getting approval we are now going to have the information so that we can play with it.
  -->
@@ -108,5 +119,6 @@ else {
  </body>
  </html>
  <?php
+
 }
 ?>
